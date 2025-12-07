@@ -1,0 +1,126 @@
+---
+title: Introduction
+description: Overview of ReserNow and its core capabilities for AI-powered appointment and booking management
+---
+
+## Getting Started with ReserNow
+
+ReserNow is an AI-powered booking management system designed to streamline appointment scheduling for businesses. You create efficient reservation workflows that adapt to your business needs, integrate seamlessly with existing tools, and provide a superior customer experience.
+
+<Columns cols={3}>
+  <Card title="Quick Setup" icon="zap" href="#setup-guide">
+    Get started in minutes with our guided setup process.
+  </Card>
+  <Card title="API Integration" icon="code" href="#api-overview">
+    Connect ReserNow to your existing systems and workflows.
+  </Card>
+  <Card title="AI Features" icon="sparkles" href="#ai-capabilities">
+    Leverage artificial intelligence for smart scheduling.
+  </Card>
+</Columns>
+
+## Core Features
+
+ReserNow offers comprehensive booking management capabilities that go beyond traditional scheduling systems. You manage appointments across multiple locations, handle complex availability rules, and use AI to optimize your booking processes.
+
+<Tabs>
+  <Tab title="Appointment Management" icon="calendar">
+    You create and manage appointments with real-time availability checking. The system automatically handles conflicts and sends notifications to customers and staff.
+
+    <Callout kind="info">Appointments can be booked up to 6 months in advance with customizable booking windows.</Callout>
+
+    <Steps>
+      <Step title="Create Service" icon="plus">
+        You define services with duration, pricing, and resource requirements.
+      </Step>
+      <Step title="Set Availability" icon="clock">
+        You configure staff schedules and business hours.
+      </Step>
+      <Step title="Book Appointment" icon="check">
+        Customers select dates and times through your booking interface.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Resource Allocation" icon="users">
+    You allocate staff and equipment to appointments efficiently. The AI engine suggests optimal assignments based on skills and availability.
+
+    <CodeGroup tabs="JavaScript,Python">
+      ```javascript
+const booking = {
+  serviceId: 'haircut',
+  staffId: 'jane_doe',
+  startTime: '2024-01-15T10:00:00Z',
+  duration: 60
+};
+
+fetch('/api/bookings', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(booking)
+});
+```
+      ```python
+import requests
+
+booking_data = {
+    "serviceId": "haircut",
+    "staffId": "jane_doe",
+    "startTime": "2024-01-15T10:00:00Z",
+    "duration": 60
+}
+
+response = requests.post('/api/bookings', json=booking_data)
+```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+## AI-Powered Optimization
+
+You benefit from artificial intelligence that learns from your booking patterns and customer preferences. The system automatically suggests optimal times, handles rescheduling requests, and predicts peak demand periods.
+
+<Expandable title="How AI Improves Bookings" default-open="false">
+  The AI analyzes historical data to identify patterns in customer behavior and business operations. You receive recommendations for pricing adjustments, staff scheduling, and service offerings that maximize revenue and customer satisfaction.
+
+  <Callout kind="tip">Enable AI suggestions in your dashboard settings to see personalized recommendations for your business.</Callout>
+</Expandable>
+
+## Integration Capabilities
+
+You connect ReserNow with your existing tools and platforms. Webhooks notify you of booking changes, API endpoints allow custom integrations, and Zapier support enables no-code connections.
+
+| Integration Type | Description | Setup Time |
+|------------------|-------------|------------|
+| Webhooks | Real-time notifications | `<5 minutes` |
+| API | Custom integrations | `15-30 minutes` |
+| Zapier | No-code workflows | `<2 minutes` |
+
+<ExpandableGroup>
+  <Expandable title="Webhook Setup Guide" default-open="false">
+    You configure webhooks to receive notifications when bookings are created, updated, or cancelled. This keeps your systems synchronized in real-time.
+
+    First, you navigate to the webhooks section in your dashboard. Then you add a new webhook endpoint with your target URL. Finally, you select the events you want to monitor.
+  </Expandable>
+  <Expandable title="Common Integration Patterns" default-open="false">
+    You integrate ReserNow with CRM systems, payment processors, and calendar applications. Popular patterns include syncing customer data and processing payments automatically.
+  </Expandable>
+</ExpandableGroup>
+
+## Security and Compliance
+
+You maintain full control over your data with enterprise-grade security measures. All communications use encryption, and you comply with GDPR and other privacy regulations.
+
+<Callout kind="success">ReserNow maintains SOC 2 Type II compliance and regular security audits.</Callout>
+
+## Getting Help
+
+You access comprehensive documentation, video tutorials, and community support. Our support team responds within 24 hours for all inquiries.
+
+<Video
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+  title="ReserNow Quick Start Guide"
+  width="560"
+  height="315"
+/>
+
+Ready to transform your booking management? You start with a free trial that includes all features and unlimited bookings for 30 days.

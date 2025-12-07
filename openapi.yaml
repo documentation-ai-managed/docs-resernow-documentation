@@ -1,0 +1,209 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: ReserNow API
+  description: API for managing bookings and appointments in the ReserNow system, providing comprehensive scheduling capabilities with AI-powered optimization and real-time availability management
+  license:
+    name: MIT
+servers:
+  - url: https://api.resernow.com/v1
+paths:
+  /bookings:
+    get:
+      summary: Retrieve a list of bookings with optional filtering
+      operationId: listBookings
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of bookings to return, with a maximum limit of 100 for performance optimization
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successful response returning a paginated list of bookings with complete details including customer information, service types, and scheduling data
+          headers:
+            x-next:
+              description: URL link for accessing the next page of booking results when pagination is applied
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookings'
+        default:
+          description: Error response for unexpected issues during booking retrieval, including rate limiting or server errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new booking with automatic conflict checking and availability validation
+      operationId: createBooking
+      responses:
+        201:
+          description: Booking successfully created with confirmation details and unique booking identifier for future reference
+        default:
+          description: Error response when booking creation fails due to conflicts, validation issues, or system errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /bookings/{bookingId}:
+    get:
+      summary: Retrieve detailed information for a specific booking by its unique identifier
+      operationId: getBooking
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          description: Unique identifier for the booking to retrieve, typically in format bk_ followed by alphanumeric characters
+          schema:
+            type: string
+      responses:
+        200:
+          description: Detailed booking information returned successfully, including all associated data like customer details and service information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookings'
+        default:
+          description: Error response when the requested booking cannot be found or access is denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an existing booking with new information while maintaining data integrity
+      operationId: updateBooking
+      responses:
+        200:
+          description: Booking updated successfully with confirmation of changes applied
+        default:
+          description: Error response when booking update fails due to validation errors or conflicts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /services:
+    get:
+      summary: Retrieve a list of available services with pricing and duration information
+      operationId: listServices
+      parameters:
+        - name: category
+          in: query
+          description: Filter services by category to narrow down results to specific service types
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response with list of services including detailed descriptions, pricing, and availability information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Services'
+        default:
+          description: Error response for service listing failures or system issues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new service offering with customizable pricing and availability rules
+      operationId: createService
+      responses:
+        201:
+          description: Service created successfully with unique identifier for management and booking purposes
+        default:
+          description: Error response when service creation fails due to validation or system errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Booking:
+      required:
+        - id
+        - serviceId
+        - customerId
+        - startTime
+      properties:
+        id:
+          type: string
+          example: bk_123456
+        serviceId:
+          type: string
+          example: svc_haircut
+        customerId:
+          type: string
+          example: cus_789012
+        staffId:
+          type: string
+          example: staff_345
+        startTime:
+          type: string
+          format: date-time
+          example: '2024-01-15T10:00:00Z'
+        duration:
+          type: integer
+          example: 60
+        status:
+          type: string
+          enum: [pending, confirmed, in_progress, completed, cancelled]
+          example: confirmed
+        price:
+          type: number
+          format: float
+          example: 75.00
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-01-10T08:30:00Z'
+    Bookings:
+      type: array
+      items:
+        $ref: '#/components/schemas/Booking'
+    Service:
+      required:
+        - id
+        - name
+        - duration
+      properties:
+        id:
+          type: string
+          example: svc_haircut
+        name:
+          type: string
+          example: Haircut and Styling
+        description:
+          type: string
+          example: Professional haircut with styling services
+        duration:
+          type: integer
+          example: 60
+        price:
+          type: number
+          format: float
+          example: 75.00
+        category:
+          type: string
+          example: hair_services
+    Services:
+      type: array
+      items:
+        $ref: '#/components/schemas/Service'
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 400
+        message:
+          type: string
+          example: Invalid request parameters

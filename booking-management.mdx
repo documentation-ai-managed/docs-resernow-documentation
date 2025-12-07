@@ -1,0 +1,171 @@
+---
+title: Booking Management
+description: Core processes for creating and managing bookings with ReserNow
+---
+
+## Booking Lifecycle
+
+You manage the complete booking lifecycle from creation to completion using ReserNow's comprehensive API. The system handles all stages automatically while giving you full control over the process.
+
+<Callout kind="info">Bookings can be created through the API, dashboard, or customer-facing booking widgets.</Callout>
+
+## Creating Bookings
+
+You create bookings by specifying the service, customer, and time slot. The API validates availability and prevents conflicts automatically.
+
+<Steps>
+  <Step title="Check Availability" icon="search">
+    You query available time slots for your desired service and date.
+  </Step>
+  <Step title="Select Time" icon="clock">
+    You choose an available time slot that meets your requirements.
+  </Step>
+  <Step title="Create Booking" icon="plus">
+    You submit the booking with customer and service details.
+  </Step>
+  <Step title="Confirm" icon="check">
+    You receive a booking confirmation with unique ID and details.
+  </Step>
+</Steps>
+
+## Booking States
+
+Bookings progress through different states as they move through their lifecycle. You can track and update booking status programmatically.
+
+<Tabs>
+  <Tab title="Active States" icon="play">
+    | State | Description |
+    |-------|-------------|
+    | `pending` | Awaiting confirmation |
+    | `confirmed` | Booking confirmed |
+    | `in_progress` | Service in progress |
+    | `completed` | Service finished |
+  </Tab>
+  <Tab title="Cancelled States" icon="x">
+    | State | Description |
+    |-------|-------------|
+    | `cancelled` | Booking cancelled |
+    | `no_show` | Customer didn't arrive |
+  </Tab>
+</Tabs>
+
+## Managing Availability
+
+You define and manage availability rules that control when bookings can be made. This includes business hours, staff schedules, and blocked time periods.
+
+<CodeGroup tabs="JavaScript,Python">
+  ```javascript
+// Get available slots for a service
+async function getAvailableSlots(serviceId, date) {
+  const response = await fetch(`/api/services/${serviceId}/availability?date=${date}`, {
+    headers: { 'Authorization': `Bearer ${apiKey}` }
+  });
+  return response.json();
+}
+
+// Example usage
+const slots = await getAvailableSlots('haircut', '2024-01-15');
+console.log('Available slots:', slots);
+```
+  ```python
+def get_available_slots(service_id, date):
+    response = requests.get(
+        f'/api/services/{service_id}/availability',
+        params={'date': date},
+        headers={'Authorization': f'Bearer {api_key}'}
+    )
+    return response.json()
+
+# Example usage
+slots = get_available_slots('haircut', '2024-01-15')
+print('Available slots:', slots)
+```
+</CodeGroup>
+
+## Customer Management
+
+You manage customer information and preferences to provide personalized booking experiences. Customer data includes contact information and booking history.
+
+<Expandable title="Customer Profiles" default-open="false">
+  You create detailed customer profiles with contact information, preferences, and booking history. This enables personalized service recommendations and automated reminders.
+
+  <Callout kind="tip">Use customer IDs to link bookings across multiple services and locations.</Callout>
+</Expandable>
+
+## Staff Assignment
+
+You assign staff members to bookings based on skills, availability, and workload. The system can suggest optimal assignments or allow manual selection.
+
+<Steps>
+  <Step title="View Staff Availability" icon="users">
+    You check which staff members are available during the booking time.
+  </Step>
+  <Step title="Match Skills" icon="check-circle">
+    You ensure the staff member has the required skills for the service.
+  </Step>
+  <Step title="Assign" icon="user">
+    You assign the staff member to the booking.
+  </Step>
+</Steps>
+
+## Notifications and Reminders
+
+You configure automated notifications for customers and staff. Reminders are sent via email, SMS, or push notifications at key points in the booking lifecycle.
+
+<ExpandableGroup>
+  <Expandable title="Customer Notifications" default-open="false">
+    Customers receive confirmation emails, reminders 24 hours before their appointment, and follow-up surveys after completion.
+  </Expandable>
+  <Expandable title="Staff Notifications" default-open="false">
+    Staff members get notified of new assignments, schedule changes, and daily agendas.
+  </Expandable>
+</ExpandableGroup>
+
+## Rescheduling and Cancellations
+
+You handle rescheduling requests and cancellations with built-in policies and automated workflows.
+
+<Callout kind="info">Cancellation policies can be configured per service with automatic refunds or credits.</Callout>
+
+## Reporting and Analytics
+
+You access detailed reports on booking performance, staff utilization, and customer satisfaction metrics.
+
+<CodeGroup tabs="JavaScript,Python">
+  ```javascript
+// Get booking statistics
+async function getBookingStats(startDate, endDate) {
+  const response = await fetch(`/api/reports/bookings?start=${startDate}&end=${endDate}`, {
+    headers: { 'Authorization': `Bearer ${apiKey}` }
+  });
+  return response.json();
+}
+
+// Example usage
+const stats = await getBookingStats('2024-01-01', '2024-01-31');
+console.log('Booking stats:', stats);
+```
+  ```python
+def get_booking_stats(start_date, end_date):
+    response = requests.get(
+        '/api/reports/bookings',
+        params={'start': start_date, 'end': end_date},
+        headers={'Authorization': f'Bearer {api_key}'}
+    )
+    return response.json()
+
+# Example usage
+stats = get_booking_stats('2024-01-01', '2024-01-31')
+print('Booking stats:', stats)
+```
+</CodeGroup>
+
+## Integration with Calendar Systems
+
+You sync bookings with external calendar systems like Google Calendar or Outlook for seamless scheduling.
+
+<Expandable title="Calendar Sync" default-open="false">
+  Enable calendar sync to automatically create events in your preferred calendar application. This ensures staff schedules stay synchronized across all platforms.
+
+  <Callout kind="tip">Two-way sync allows changes made in external calendars to update ReserNow bookings automatically.</Callout>
+</Expandable>

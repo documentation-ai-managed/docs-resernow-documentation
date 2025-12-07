@@ -1,0 +1,172 @@
+---
+title: Authentication
+description: How to authenticate with the ReserNow API for secure booking management
+---
+
+## API Authentication Overview
+
+You authenticate with the ReserNow API using API keys to ensure secure access to your booking data. Authentication is required for all API requests except public endpoints like service listings.
+
+<Callout kind="info">Keep your API keys secure and never share them publicly.</Callout>
+
+## Obtaining API Keys
+
+You generate API keys through your ReserNow dashboard. Navigate to the API settings section and create a new key with appropriate permissions.
+
+<Steps>
+  <Step title="Access Dashboard" icon="settings">
+    You log in to your ReserNow dashboard and navigate to the API section.
+  </Step>
+  <Step title="Create Key" icon="plus">
+    You click "Create API Key" and enter a descriptive name for the key.
+  </Step>
+  <Step title="Set Permissions" icon="lock">
+    You select the appropriate permissions for the key, such as read-only or full access.
+  </Step>
+  <Step title="Store Securely" icon="shield">
+    You copy the generated key and store it securely in your application environment.
+  </Step>
+</Steps>
+
+## Using API Keys
+
+You include your API key in the Authorization header for all authenticated requests. The key format is "Bearer YOUR_API_KEY".
+
+<Tabs>
+  <Tab title="JavaScript" icon="code">
+    ```javascript
+const apiKey = process.env.RESERNOW_API_KEY;
+
+const response = await fetch('/api/bookings', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+const bookings = await response.json();
+console.log(bookings);
+```
+  </Tab>
+  <Tab title="Python" icon="code">
+    ```python
+import os
+import requests
+
+api_key = os.getenv('RESERNOW_API_KEY')
+
+headers = {
+    'Authorization': f'Bearer {api_key}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get('/api/bookings', headers=headers)
+bookings = response.json()
+print(bookings)
+```
+  </Tab>
+  <Tab title="cURL" icon="terminal">
+    ```bash
+curl -X GET \
+  'https://api.resernow.com/bookings' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -H 'Content-Type: application/json'
+```
+  </Tab>
+</Tabs>
+
+## Key Permissions
+
+You assign different permission levels to your API keys based on the operations you need to perform. This follows the principle of least privilege.
+
+| Permission Level | Description | Allowed Operations |
+|------------------|-------------|-------------------|
+| Read-only | View data only | GET requests |
+| Read-write | View and modify | GET, POST, PUT, PATCH |
+| Admin | Full access | All operations including DELETE |
+
+<Expandable title="Managing Multiple Keys" default-open="false">
+  You create separate API keys for different applications or environments. This allows you to revoke access for specific keys without affecting others.
+
+  For example, you use one key for your production website and another for development testing.
+</Expandable>
+
+## Security Best Practices
+
+You implement several security measures to protect your API keys and data.
+
+<Callout kind="danger">Never commit API keys to version control systems.</Callout>
+
+<Steps>
+  <Step title="Environment Variables" icon="settings">
+    You store API keys as environment variables, not in your code.
+  </Step>
+  <Step title="Key Rotation" icon="refresh-cw">
+    You rotate keys regularly and update them in your applications.
+  </Step>
+  <Step title="Monitor Usage" icon="eye">
+    You monitor API usage patterns for unusual activity.
+  </Step>
+  <Step title="IP Restrictions" icon="lock">
+    You restrict API access to specific IP addresses if possible.
+  </Step>
+</Steps>
+
+## Error Handling
+
+You handle authentication errors gracefully in your application. Common error codes include 401 for invalid keys and 403 for insufficient permissions.
+
+<CodeGroup tabs="JavaScript,Python">
+  ```javascript
+try {
+  const response = await fetch('/api/bookings', {
+    headers: { 'Authorization': `Bearer ${apiKey}` }
+  });
+  
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Invalid API key');
+    } else if (response.status === 403) {
+      throw new Error('Insufficient permissions');
+    }
+  }
+  
+  const data = await response.json();
+} catch (error) {
+  console.error('Authentication error:', error.message);
+}
+```
+  ```python
+try:
+    response = requests.get('/api/bookings', headers={'Authorization': f'Bearer {api_key}'})
+    response.raise_for_status()
+    data = response.json()
+except requests.exceptions.HTTPError as e:
+    if e.response.status_code == 401:
+        print("Invalid API key")
+    elif e.response.status_code == 403:
+        print("Insufficient permissions")
+    else:
+        print(f"HTTP error: {e}")
+```
+</CodeGroup>
+
+## Rate Limiting
+
+The API enforces rate limits to prevent abuse. You monitor your request rates and implement backoff strategies for rate-limited requests.
+
+<ExpandableGroup>
+  <Expandable title="Rate Limit Headers" default-open="false">
+    Response headers include rate limit information: X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset.
+  </Expandable>
+  <Expandable title="Handling Rate Limits" default-open="false">
+    When you receive a 429 status code, you wait until the reset time before making additional requests.
+  </Expandable>
+</ExpandableGroup>
+
+## Testing Authentication
+
+You test your authentication setup using the API's test endpoints before deploying to production.
+
+<Callout kind="tip">Use the `/api/test` endpoint to verify your API key is working correctly.</Callout>

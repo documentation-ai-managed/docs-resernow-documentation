@@ -1,0 +1,184 @@
+---
+title: Webhooks
+description: Setting up and managing webhooks for real-time booking notifications
+---
+
+## Webhook Overview
+
+You use webhooks to receive real-time notifications about booking events in ReserNow. Webhooks deliver data instantly when events occur, enabling you to build responsive integrations.
+
+<Callout kind="info">Webhooks are more efficient than polling the API for updates.</Callout>
+
+## Setting Up Webhooks
+
+You configure webhooks through your ReserNow dashboard or API. Each webhook endpoint receives notifications for specific events.
+
+<Steps>
+  <Step title="Create Endpoint" icon="plus">
+    You set up an HTTP endpoint in your application to receive webhook payloads.
+  </Step>
+  <Step title="Register Webhook" icon="settings">
+    You register the endpoint URL in ReserNow with desired events.
+  </Step>
+  <Step title="Test Connection" icon="check-circle">
+    You test the webhook to ensure proper delivery.
+  </Step>
+  <Step title="Handle Payloads" icon="code">
+    You implement logic to process incoming webhook data.
+  </Step>
+</Steps>
+
+## Supported Events
+
+You can subscribe to various booking-related events. Each event type delivers specific data payloads.
+
+<Tabs>
+  <Tab title="Booking Events" icon="calendar">
+    | Event | Description |
+    |-------|-------------|
+    | `booking.created` | New booking created |
+    | `booking.updated` | Booking modified |
+    | `booking.cancelled` | Booking cancelled |
+    | `booking.completed` | Service finished |
+  </Tab>
+  <Tab title="Customer Events" icon="user">
+    | Event | Description |
+    |-------|-------------|
+    | `customer.created` | New customer added |
+    | `customer.updated` | Customer info changed |
+    | `customer.deleted` | Customer removed |
+  </Tab>
+  <Tab title="Staff Events" icon="users">
+    | Event | Description |
+    |-------|-------------|
+    | `staff.created` | New staff member |
+    | `staff.updated` | Staff info changed |
+    | `staff.deleted` | Staff member removed |
+  </Tab>
+</Tabs>
+
+## Webhook Payloads
+
+Webhook payloads contain structured JSON data with event details. You receive information about the affected resource and the type of change.
+
+<CodeGroup tabs="JavaScript,Python">
+  ```javascript
+// Example booking.created payload
+{
+  "event": "booking.created",
+  "data": {
+    "id": "bk_123456",
+    "serviceId": "haircut",
+    "customerId": "cus_789",
+    "staffId": "staff_456",
+    "startTime": "2024-01-15T10:00:00Z",
+    "duration": 60,
+    "status": "confirmed",
+    "createdAt": "2024-01-10T08:30:00Z"
+  },
+  "webhookId": "wh_abc123"
+}
+
+// Handling the webhook
+app.post('/webhooks/resernow', (req, res) => {
+  const { event, data } = req.body;
+  
+  switch (event) {
+    case 'booking.created':
+      // Process new booking
+      console.log('New booking:', data.id);
+      break;
+    case 'booking.cancelled':
+      // Handle cancellation
+      console.log('Cancelled booking:', data.id);
+      break;
+  }
+  
+  res.sendStatus(200);
+});
+```
+  ```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/webhooks/resernow', methods=['POST'])
+def handle_webhook():
+    data = request.get_json()
+    event = data.get('event')
+    booking_data = data.get('data')
+    
+    if event == 'booking.created':
+        # Process new booking
+        print(f'New booking: {booking_data["id"]}')
+    elif event == 'booking.cancelled':
+        # Handle cancellation
+        print(f'Cancelled booking: {booking_data["id"]}')
+    
+    return jsonify({'status': 'ok'}), 200
+
+if __name__ == '__main__':
+    app.run()
+```
+</CodeGroup>
+
+## Security and Verification
+
+You verify webhook authenticity using signatures to ensure messages come from ReserNow.
+
+<Expandable title="Webhook Signatures" default-open="false">
+  Each webhook request includes an X-ReserNow-Signature header. You verify this signature using your webhook secret to confirm the request's authenticity.
+
+  <Callout kind="danger">Always verify webhook signatures to prevent malicious requests.</Callout>
+</Expandable>
+
+## Error Handling and Retries
+
+You handle webhook delivery failures gracefully. ReserNow retries failed deliveries with exponential backoff.
+
+<Steps>
+  <Step title="Respond Quickly" icon="zap">
+    You respond to webhook requests within 10 seconds to avoid timeouts.
+  </Step>
+  <Step title="Handle Failures" icon="alert-circle">
+    You implement error handling for network issues and processing failures.
+  </Step>
+  <Step title="Idempotency" icon="refresh-cw">
+    You make webhook processing idempotent to handle duplicate deliveries.
+  </Step>
+</Steps>
+
+## Webhook Management
+
+You manage your webhooks through the dashboard or API, including creation, updates, and deactivation.
+
+<ExpandableGroup>
+  <Expandable title="Testing Webhooks" default-open="false">
+    Use the webhook testing tools in your dashboard to send test events and verify your endpoint's behavior.
+  </Expandable>
+  <Expandable title="Monitoring" default-open="false">
+    Monitor webhook delivery rates and response times to ensure reliable operation.
+  </Expandable>
+</ExpandableGroup>
+
+## Common Use Cases
+
+You implement webhooks for various integration scenarios.
+
+<Callout kind="tip">Webhooks enable real-time synchronization with CRM systems, calendar applications, and notification services.</Callout>
+
+## Best Practices
+
+You follow webhook best practices for reliable operation.
+
+<Steps>
+  <Step title="Validate Payloads" icon="check">
+    You validate incoming webhook data before processing.
+  </Step>
+  <Step title="Log Events" icon="file-text">
+    You log webhook events for debugging and auditing.
+  </Step>
+  <Step title="Rate Limiting" icon="clock">
+    You implement rate limiting to handle high-volume scenarios.
+  </Step>
+</Steps>
